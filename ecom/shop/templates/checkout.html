@@ -172,7 +172,9 @@
         </table>
 
         <h2 class="section-title">Shipping Information</h2>
-        <form class="checkout-form">
+        <form class="checkout-form" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="items" name="items">
             <label for="name">Full Name</label>
             <input type="text" id="name" name="name" required>
 
@@ -187,6 +189,7 @@
 
             <label for="zipcode">Zip Code</label>
             <input type="number" id="zipcode" name="zipcode" required>
+            <button type="submit" class="place-order-btn">Place Order</button>
         </form>
 
         <h2 class="section-title">Payment Method</h2>
@@ -198,47 +201,49 @@
                 <input type="radio" name="payment" value="paypal"> PayPal
             </label>
         </div>
-
-        <button type="submit" class="place-order-btn">Place Order</button>
     </div>
 
     <script>
-        // Populate cart summary from local storage
-        function populateCartSummary() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const cartSummaryBody = document.getElementById('cart-summary-body');
-            const orderTotal = document.getElementById('order-total');
+    // Populate cart summary from local storage
+    function populateCartSummary() {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartSummaryBody = document.getElementById('cart-summary-body');
+        const orderTotal = document.getElementById('order-total');
+        const itemsInput = document.getElementById('items');
 
-            let totalAmount = 0;
-            cartSummaryBody.innerHTML = '';
+        let totalAmount = 0;
+        cartSummaryBody.innerHTML = '';
 
-            cartItems.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalAmount += itemTotal;
+        // Prepare items for hidden input
+        const itemsArray = cartItems.map(item => ({
+            title: item.title,
+            quantity: item.quantity,
+            price: item.price,
+            total: item.price * item.quantity
+        }));
 
-                cartSummaryBody.innerHTML += `
-                    <tr>
-                        <td>${item.title}</td>
-                        <td>${item.quantity}</td>
-                        <td>$${item.price.toFixed(2)}</td>
-                        <td>$${itemTotal.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
+        itemsArray.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            totalAmount += itemTotal;
 
-            orderTotal.textContent = `$${totalAmount.toFixed(2)}`;
-        }
+            cartSummaryBody.innerHTML += `
+                <tr>
+                    <td>${item.title}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${itemTotal.toFixed(2)}</td>
+                </tr>
+            `;
+        });
 
-        // Update cart count on header
-        function updateCartCount() {
-            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-            document.getElementById('cart-count').textContent = cartCount;
-        }
+        orderTotal.textContent = `$${totalAmount.toFixed(2)}`;
+        itemsInput.value = JSON.stringify(itemsArray);  // Fill hidden input
+    }
 
-        // Initialize on page load
-        updateCartCount();
+    // Call populateCartSummary when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
         populateCartSummary();
-    </script>
+    });
+</script>
 </body>
 </html>

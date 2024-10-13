@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.template.defaultfilters import title
 from django.core.paginator import Paginator
-from .models import Item
+from .models import Item, Order
+import json
+
 # Create your views here.
 
 
@@ -28,6 +30,30 @@ def cart_view(request):
 
 
 def checkout(request):
+
+    if request.method == 'POST':
+        items_json = request.POST.get('items', "")
+        name = request.POST.get('name', "")
+        email = request.POST.get('email', "")
+        address = request.POST.get('address', "")
+        city = request.POST.get('city', "")
+        zipcode = request.POST.get('zipcode', "")
+
+        # Check if items_json is being received correctly
+        if items_json:
+            print("Items received:", items_json)  # Debugging line
+
+            # Create an Order instance
+            order = Order(
+                name=name,
+                email=email,
+                address=address,
+                city=city,
+                zipcode=zipcode,
+                items=items_json,  # Directly save the JSON data
+            )
+            order.save()
+
     return render(request, 'checkout.html')
 
 

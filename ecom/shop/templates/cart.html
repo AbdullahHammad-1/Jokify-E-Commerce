@@ -54,6 +54,13 @@
             font-size: 1.1em;
             color: #e63946;
         }
+        .delete-button {
+            background: none;
+            border: none;
+            color: #e63946;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
         .checkout-button {
             display: block;
             margin: 20px auto;
@@ -101,15 +108,25 @@
             }
 
             // Display each item in the cart
-            cartItems.forEach(item => {
+            cartItemsContainer.innerHTML = '';  // Clear previous items
+            cartItems.forEach((item, index) => {
                 const itemElement = document.createElement('div');
                 itemElement.className = 'cart-item';
                 itemElement.innerHTML = `
                     <span class="item-title">${item.title}</span>
                     <span class="item-price">$${item.price.toFixed(2)}</span>
+                    <button class="delete-button" onclick="removeItem(${index})">&times;</button>
                 `;
                 cartItemsContainer.appendChild(itemElement);
             });
+        }
+
+        // Function to remove an item from the cart
+        function removeItem(index) {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItems.splice(index, 1);  // Remove the item from the array
+            localStorage.setItem('cart', JSON.stringify(cartItems));  // Update local storage
+            displayCartItems();  // Refresh the cart display
         }
 
         // Call the function to display cart items when the page loads

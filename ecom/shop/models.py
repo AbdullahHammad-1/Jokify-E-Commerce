@@ -23,6 +23,7 @@ class Order(models.Model):
     zipcode = models.CharField(max_length=100)
     items = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    total = models.CharField(max_length=200)
 
     def get_items(self):
         """Deserialize the items field."""

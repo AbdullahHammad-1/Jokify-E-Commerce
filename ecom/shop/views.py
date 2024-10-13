@@ -38,6 +38,7 @@ def checkout(request):
         address = request.POST.get('address', "")
         city = request.POST.get('city', "")
         zipcode = request.POST.get('zipcode', "")
+        total = request.POST.get('total', "")
 
         # Check if items_json is being received correctly
         if items_json:
@@ -51,6 +52,7 @@ def checkout(request):
                 city=city,
                 zipcode=zipcode,
                 items=items_json,  # Directly save the JSON data
+                total=total,
             )
             order.save()
 

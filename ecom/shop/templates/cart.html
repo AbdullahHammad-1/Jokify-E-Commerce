@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Jokify</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="{% static 'js/cart.js' %}"></script>
+    <style>
+        /* Add your styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .header a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2em;
+            margin: 0 15px;
+        }
+        .cart-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .item-title {
+            font-size: 1.2em;
+            color: #333;
+        }
+        .item-price {
+            font-size: 1.1em;
+            color: #e63946;
+        }
+        .checkout-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #e52e71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .checkout-button:hover {
+            background-color: #ff8a00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="{% url 'index' %}">Home</a>
+        <span>Jokify</span>
+        <a href="{% url 'cart' %}" class="cart-icon-container">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count" class="cart-count">0</span>
+        </a>
+    </div>
+
+    <div class="cart-container">
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <button class="checkout-button" onclick="window.location.href='{% url 'checkout' %}'">Checkout</button>
+    </div>
+
+    <script>
+        // Function to retrieve cart items from local storage and display them
+        function displayCartItems() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartItemsContainer = document.getElementById('cart-items');
+
+            // Check if the cart is empty
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+                return;
+            }
+
+            // Display each item in the cart
+            cartItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                itemElement.innerHTML = `
+                    <span class="item-title">${item.title}</span>
+                    <span class="item-price">$${item.price.toFixed(2)}</span>
+                `;
+                cartItemsContainer.appendChild(itemElement);
+            });
+        }
+
+        // Call the function to display cart items when the page loads
+        window.onload = displayCartItems;
+    </script>
+</body>
+</html>

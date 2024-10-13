@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Detail - Jokify</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="{% static 'js/cart.js' %}"></script>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Updated Header styling to match home page theme */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71); /* Gradient background */
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .header a {
+            text-decoration: none;
+            color: white;
+            font-size: 1.2em;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        .header .home-btn {
+            font-weight: bold;
+        }
+        .header a:hover {
+            color: #ff8a00; /* Hover color for contrast */
+        }
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+        }
+        .cart-icon {
+            font-size: 24px;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: #fff; /* White for cart count to make it pop */
+            color: #e52e71;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Item container styling */
+        .item-container {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .item-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .item-info {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .item-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin: 10px 0;
+        }
+        .item-price {
+            font-size: 1.5em;
+            color: #e52e71;
+        }
+        .item-discounted-price {
+            color: #666;
+            text-decoration: line-through;
+            margin-left: 10px;
+            font-size: 1em;
+        }
+        .item-description {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        /* Add to Cart button */
+        .button-add-cart {
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 1em;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-add-cart:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Home Button and Cart Icon -->
+    <div class="header">
+        <a href="{% url 'index' %}" class="home-btn">Home</a>
+        <span>Jokify</span>
+        <a href="{% url 'cart' %}" class="cart-icon-container">
+            <i class="fas fa-shopping-cart cart-icon"></i>
+            <span id="cart-count" class="cart-count">0</span>
+        </a>
+    </div>
+
+    <!-- Item Detail Container -->
+    <div class="item-container">
+        <img src="{{ item.image }}" alt="{{ item.title }}" class="item-image">
+        <div class="item-info">
+            <h1 class="item-title">{{ item.title }}</h1>
+            <div class="item-price">
+                ${{ item.dis_price }}
+                {% if item.dis_price %}
+                    <span class="item-discounted-price">${{ item.price }}</span>
+                {% endif %}
+            </div>
+            <p class="item-description">{{ item.description }}</p>
+            <button onclick="addToCart({{ item.id }}, '{{ item.title }}', {{ item.price }}, {{ item.dis_price }}, '{{ item.image }}'); updateCartCount();" class="button-add-cart">Add to Cart</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to update cart icon count from local storage
+        function updateCartCount() {
+            const cartItems = getCartItems();
+            const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        // Update cart count on page load
+        updateCartCount();
+    </script>
+</body>
+</html>
